@@ -6,3 +6,7 @@
 4. Make a new bookmark in your web browser
 5. Edit the bookmark and paste the script into the bookmark's URL field
 6. Click the bookmark on any site to run the script
+
+---
+
+Created partially using ChatGPT
