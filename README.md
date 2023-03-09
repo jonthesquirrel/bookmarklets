@@ -1,7 +1,3 @@
-# bookmarklets
-
-Utility scripts you can save as bookmarks to run on any page
-
 ## How to use
 
 1. Click on any of the `.js` files
