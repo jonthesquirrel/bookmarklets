@@ -1,6 +1,6 @@
 ## How to use
 
-1. Click on any of the `.js` files
+1. Click on any of the `.js` files in the above list
 2. Read the file to make sure you understand what it does and that you trust it
 3. Click the "copy raw file" button
 4. Make a new bookmark in your web browser
