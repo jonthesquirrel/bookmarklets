@@ -73,6 +73,4 @@ javascript:(() => {
   const citation = `"${title}" *YouTube*, uploaded by ${author}, ${uploadDate}, ${url}.`;
 
   navigator.clipboard.writeText(citation);
-
-  alert(`Citation copied to clipboard:\n${citation}`);
 })();
