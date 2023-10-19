@@ -1,15 +1,5 @@
 javascript:(() => {
-  function getTitle() {
-    const scrapedTitle = document.querySelector("#title>h1").innerText;
-    return scrapedTitle;
-  }
-
-  function getAuthor() {
-    const scrapedAuthor = document.querySelector("#channel-name a").innerText;
-    return scrapedAuthor;
-  }
-
-  function getDate() {
+  function getUploadDate() {
     const scrapedDate = document.querySelector("#info-container #info span:nth-of-type(3)").innerText;
     let dateObject = new Date(scrapedDate);
     const formattedDate = dateObject.toLocaleDateString('en-US', {
@@ -20,25 +10,67 @@ javascript:(() => {
     });
     return formattedDate;
   }
+  const uploadDate = getUploadDate();
 
-  function getURL() {
-    const scrapedURL = window.location.href;
-    const videoID = scrapedURL.match(/(?<=\?v=)[^&\n]+/)[0];
-    const shortURL = `https://youtu.be/${videoID}`;
-    return shortURL;
-  }
-
-  const title = getTitle();
-  const author = getAuthor();
-  const date = getDate();
-  const url = getURL();
-
-  if (date === "Invalid Date") {
+  if (uploadDate === "Invalid Date") {
     alert("Click the video description to expand the full upload date, then run the bookmarklet again.");
     return;
   }
 
-  const citation = `"${title}" *YouTube*, uploaded by ${author}, ${date}, ${url}.`;
+  function getTitle() {
+    const scrapedTitle = document.querySelector("#title>h1").innerText;
+    return scrapedTitle;
+  }
+
+  const title = getTitle();
+
+  function getAuthor() {
+    const scrapedAuthor = document.querySelector("#channel-name a").innerText;
+    return scrapedAuthor;
+  }
+
+  const author = getAuthor();
+
+  function timestampToSeconds(timestamp) {
+    const timestampParts = timestamp.split(":").map(Number);
+    let hours, minutes, seconds;
+    if (timestampParts.length === 2) {
+      hours = 0;
+      minutes = timestampParts[0];
+      seconds = timestampParts[1];
+    }
+    if (timestampParts.length === 3) {
+      hours = timestampParts[0];
+      minutes = timestampParts[1];
+      seconds = timestampParts[2];
+    }
+    const totalSeconds = (hours * 60 * 60) + (minutes * 60) + seconds;
+    return totalSeconds;
+  }
+
+  function getURL() {
+    const scrapedURL = window.location.href;
+    const videoID = scrapedURL.match(/(?<=\?v=)[^&\n]+/)[0];
+
+    const scrapedTimestamp = document.querySelector(".ytp-time-current").innerText;
+    const timestampAsSeconds = timestampToSeconds(scrapedTimestamp);
+
+    const includeTimestamp = confirm("Include timestamp in citation?");
+
+    let shortURL;
+
+    if (includeTimestamp) {
+      shortURL = `https://youtu.be/${videoID}?t=${timestampAsSeconds}`;
+    } else {
+      shortURL = `https://youtu.be/${videoID}`;
+    }
+
+    return shortURL;
+  }
+
+  const url = getURL();
+
+  const citation = `"${title}" *YouTube*, uploaded by ${author}, ${uploadDate}, ${url}.`;
 
   navigator.clipboard.writeText(citation);
 
