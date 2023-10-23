@@ -1,32 +1,33 @@
 javascript:(() => {
   function getUploadDate() {
-    const scrapedDate = document.querySelector("#info-container #info span:nth-of-type(3)").innerText;
-    let dateObject = new Date(scrapedDate);
-    const formattedDate = dateObject.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    return formattedDate;
+    return [...document.querySelectorAll("#info-container>#info>span")]
+      .map(element => element.innerText)
+      .map(text => text.replace(/Premiered /, ""))
+      .filter(text => Date.parse(text))
+      .map(text => new Date(text))
+      .map(date =>
+        `${date.getDate()} ${
+          date.toLocaleString('default', {month: 'long'})
+        } ${date.getFullYear()}`
+      )
+      .pop();
   }
+
   const uploadDate = getUploadDate();
 
-  if (uploadDate === "Invalid Date") {
+  if (!uploadDate) {
     alert("Click the video description to expand the full upload date, then run the bookmarklet again.");
     return;
   }
 
   function getTitle() {
-    const scrapedTitle = document.querySelector("#title>h1").innerText;
-    return scrapedTitle;
+    return document.querySelector("#title>h1").innerText;
   }
 
   const title = getTitle();
 
   function getAuthor() {
-    const scrapedAuthor = document.querySelector("#channel-name a").innerText;
-    return scrapedAuthor;
+    return document.querySelector("#channel-name a").innerText;
   }
 
   const author = getAuthor();
@@ -55,7 +56,7 @@ javascript:(() => {
     const scrapedTimestamp = document.querySelector(".ytp-time-current").innerText;
     const timestampAsSeconds = timestampToSeconds(scrapedTimestamp);
 
-    const includeTimestamp = confirm("Include timestamp in citation?");
+    const includeTimestamp = confirm("Include current playback position?");
 
     let shortURL;
 
